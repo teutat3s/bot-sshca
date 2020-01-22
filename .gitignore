@@ -1,8 +1,10 @@
 bin/
 keybaseca.config
 nohup.out
-env.sh
+_env
 __pycache__
+.vscode
+.DS_Store
 
 # sphinx generated files:
 _build
