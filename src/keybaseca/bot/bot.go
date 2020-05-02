@@ -20,7 +20,7 @@ import (
 
 // Get a running instance of the keybase chat API. Will use the configured credentials if necessary.
 func GetKBChat(conf config.Config) (*kbchat.API, error) {
-	return botwrapper.GetKBChat(conf.GetKeybaseHomeDir(), conf.GetKeybasePaperKey(), conf.GetKeybaseUsername())
+	return botwrapper.GetKBChat(conf.GetKeybaseHomeDir(), conf.GetKeybasePaperKey(), conf.GetKeybaseUsername(), conf.GetKeybaseTimeout())
 }
 
 // Get the username of the user that the keybaseca bot is running as
@@ -85,8 +85,15 @@ func StartBot(conf config.Config) error {
 			continue
 		}
 
-		if shared.IsAckRequest(messageBody) {
-			log.Debug("Responding to AckMessage")
+		if shared.IsPingRequest(messageBody, kbc.GetUsername()) {
+			// Respond to messages of the form `ping @botName` with `pong @senderName`
+			log.Debug("Responding to ping with pong")
+			_, err = kbc.SendMessageByConvID(msg.Message.ConvID, shared.GeneratePingResponse(msg.Message.Sender.Username))
+			if err != nil {
+				LogError(conf, kbc, msg, err)
+				continue
+			}
+		} else if shared.IsAckRequest(messageBody) {
 			// Ack any AckRequests so that kssh can determine whether it has fully connected
 			_, err = kbc.SendMessageByConvID(msg.Message.ConvID, shared.GenerateAckResponse(messageBody))
 			if err != nil {
@@ -183,7 +190,7 @@ func sendAnnouncementMessage(conf config.Config, kbc *kbchat.API) error {
 				Teams:       conf.GetTeams()})
 
 		var channel *string
-		_, err := kbc.SendMessageByTeamName(team, announcement, channel)
+		_, err := kbc.SendMessageByTeamName(team, channel, announcement)
 		if err != nil {
 			return err
 		}

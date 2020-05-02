@@ -4,8 +4,8 @@ nohup.out
 env.list
 _env
 __pycache__
-.vscode
-.DS_Store
+**/.mypy_cache/
+tests/env.sh
 
 # sphinx generated files:
 _build

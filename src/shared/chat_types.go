@@ -80,3 +80,23 @@ func IsAckRequest(msg string) bool {
 func IsAckResponse(msg string) bool {
 	return strings.HasPrefix(msg, "Ack--")
 }
+
+// Generate a ping request message
+func GeneratePingRequest(username string) string {
+	return fmt.Sprintf("ping @%s", username)
+}
+
+// Returns whether the given message is a ping request
+func IsPingRequest(msg, botUsername string) bool {
+	return strings.TrimSpace(msg) == GeneratePingRequest(botUsername)
+}
+
+// Generate a ping response message
+func GeneratePingResponse(username string) string {
+	return fmt.Sprintf("pong @%s", username)
+}
+
+// Returns whether the given message is a ping response
+func IsPingResponse(msg, localUsername string) bool {
+	return strings.TrimSpace(msg) == GeneratePingResponse(localUsername)
+}
