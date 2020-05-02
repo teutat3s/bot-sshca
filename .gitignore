@@ -2,6 +2,7 @@ bin/
 keybaseca.config
 nohup.out
 env.list
+_env
 __pycache__
 .vscode
 .DS_Store
